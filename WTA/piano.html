@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.4.9/Tone.js"></script>
+    <style>
+    #piano {
+  position:absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height:33vmin;
+  width: 98vmin;
+  border:5px solid black;
+  
+}
+    .whitenote {
+  height:100%;
+  width:7vmin;
+  box-sizing: border-box;
+  background:white;
+  float: left;
+  border-right: 0.1vmin solid black;
+}
+
+.blacknote {
+  height:65%;
+  width:3.5vmin;
+  transform: translateX(5.5vmin);
+  left:68%;
+  z-index:1;
+  background:#777;
+  
+}
+</style>
+</head>
+<body>
+    <div id = 'piano'></div>
+    <script>
+        const piano = document.querySelector('#piano')
+        var data = ['C','D','E','F','G','A','B'];
+        
+            // var synth = new Tone.PolySynth(3, Tone.Synth).toMaster();
+let html = '';
+
+  
+for (var octave = 0; octave < 2; octave++)
+{
+ for (let i = 0; i < data.length; i++)
+  {
+      let hasSharp = (data[i]!='E' && data[i]!= 'B') ? true : false
+      html+=`<div class='whitenote' data-code='${data[i]}${octave+4}'>`
+      if(hasSharp){
+          html+=`<div class='blacknote' data-code='${data[i]}#${octave+4}'></div>`
+      }
+      html+=`</div>`
+//     var note = data[i];
+//     var hasSharp = (['E','B'].indexOf(note) == -1);
+
+// html += `<div class='whitenote' onmousedown='noteDown(this, false)' onmouseup='noteUp(this,false)' onmouseleave='noteUp(this,false)' data-note='${note + (octave+4)}'>`;
+
+//     if (hasSharp) {
+//       html += `<div class='blacknote' onmousedown='noteDown(this, true)' onmouseup='noteUp(this, true)' onmouseleave='noteUp(this,true)' data-note='${note + '#' + (octave+4)}'>
+           
+//       </div>`;
+//     }
+
+//     html += `</div>`; 
+   }
+}
+piano.insertAdjacentHTML('beforeend', html)
+
+const notes = document.querySelectorAll('.whitenote, .blacknote')
+const keys = ["Tab", "1", "q", "2", "w", "e", "4", "r", "5", "t", "6", "y", "u", "8", "i", "9", "o", "p", "-", "[", "=", "]", "Backspace", "\\"]
+const synth = new Tone.PolySynth(Tone.synth).toDestination()
+
+document.addEventListener('keydown', (e)=>{
+    e.preventDefault()
+    if(!e.repeat){
+        keys.forEach((key, index)=>{
+        if(e.key==key){
+            notes[index].style.background = (notes[index].classList.contains('whitenote')) ? '#ccc' : 'black'
+            synth.triggerAttackRelease(notes[index].dataset.code, '16n')
+        }
+    })
+    }
+})
+
+document.addEventListener('keyup', (e)=>{
+    keys.forEach((key, index)=>{
+        notes[index].style.background = (notes[index].classList.contains('whitenote')) ? 'white' : '#777'
+    })
+})
+// document.getElementById('container').innerHTML = html;
+
+// function noteUp(elem, isSharp) { 
+//  elem.style.background = isSharp ? '#777' : '';
+// }
+
+// function noteDown(elem, isSharp) {
+//  var note = elem.dataset.note;
+
+//  elem.style.background = isSharp ? 'black' : '#ccc';
+//  synth.triggerAttackRelease(note, "16n");
+//  event.stopPropagation();
+// }
+        </script>
+</body>
+</html>
